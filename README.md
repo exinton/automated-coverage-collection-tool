@@ -1,0 +1,1 @@
+# automated-coverage-collection-tool
