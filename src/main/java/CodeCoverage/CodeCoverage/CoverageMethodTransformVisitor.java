@@ -8,7 +8,7 @@ import org.objectweb.asm.Opcodes;
 
 public class CoverageMethodTransformVisitor extends MethodVisitor implements Opcodes{
 	
-	boolean isBefore;
+	boolean isTest;
 	
 	
 	public CoverageMethodTransformVisitor(int api, final MethodVisitor mv) {
@@ -20,24 +20,31 @@ public class CoverageMethodTransformVisitor extends MethodVisitor implements Opc
     	String str="Test";
     	
 		if(desc.contains(str.subSequence(0, str.length()))){
-    		isBefore=true;
-    		System.out.println(desc);
+    		isTest=true;
+    		
     		
     		
     	} 
-    	return visitAnnotation(desc,visible);
+    	return mv.visitAnnotation(desc, visible);
     }
 	
-
-	/**
-    @Override
+	@Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-    	if(isBefore){
-    		System.out.println(owner);
+    	if(isTest){
+    		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        	mv.visitLdcInsn("targetClass:"+desc);
+        	mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
     	}
+    	super.visitFieldInsn(opcode, owner, name, desc);
     }
+	
+	@Override
+	public void visitMethodInsn(int opcode,String owner,String name,String desc,boolean itf){
+		
+		
+		super.visitMethodInsn(opcode, owner, name, desc, itf);
+	}
 
-    */
     
     
     
