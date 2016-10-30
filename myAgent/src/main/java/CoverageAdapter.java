@@ -2,6 +2,8 @@ import org.objectweb.asm.*;
 
 /**
  * todo 再详细设计一下runtime纪录过程
+ * redirect to file?
+ * use a static field to track?
  * Created by Yifan on 10/29/16.
  */
 public class CoverageAdapter extends ClassVisitor implements Opcodes {
