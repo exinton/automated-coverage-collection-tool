@@ -1,5 +1,3 @@
-package playRound.myAgent;
-
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -20,8 +18,12 @@ import java.lang.instrument.Instrumentation;
  * TODO the problem is: what's the parameters of the static method?
  */
 public class Agent {
-    public static void premain(String args, Instrumentation inst){
+    public static void premain(String agentArgs, Instrumentation inst){
         CoverageDriver transformer = new CoverageDriver();
         inst.addTransformer(transformer);
+    }
+
+    public static void main(String[] args) {
+
     }
 }
