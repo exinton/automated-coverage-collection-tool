@@ -12,21 +12,26 @@ public class InformationCollecter extends ClassVisitor implements Opcodes{
 //    private CoverageDriver driver;
     private boolean needAdapt;
     private int statementsCounter;
+    private String name;
 
-    public InformationCollecter(ClassVisitor cv) {
+    private String projectName;
+
+    public InformationCollecter(ClassVisitor cv, String pName) {
         super(Opcodes.ASM5, cv);
 //        this.driver = d;
         statementsCounter = 0;
+        projectName = pName;
     }
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         //一般test都放在test package下，并且jvm class name包括package路径，thus，
-        if (name.contains("/test/")){
-//            driver.needToAdapt.add(name.substring(0, name.length()-4));
-        } else {
+        if (name.contains(projectName) && !name.contains("/test/")){
             this.needAdapt = true;
+        } else {
+            this.needAdapt = false;
         }
+        this.name = name;
         cv.visit(version, access, name, signature, superName, interfaces);
     }
 
@@ -55,5 +60,8 @@ public class InformationCollecter extends ClassVisitor implements Opcodes{
     }
     boolean getNeedAdapt() {
         return this.needAdapt;
+    }
+    String getName() {
+        return name;
     }
 }

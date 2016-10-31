@@ -9,10 +9,16 @@ import java.security.ProtectionDomain;
  * Created by Yifan on 10/28/16.
  */
 
-public class CoverageDriver implements ClassFileTransformer{
+public class CoverageDriver implements ClassFileTransformer {
     /**
      * This class must contain current transforming class's total # of statements.
      */
+
+    private String pojectName;
+
+    public CoverageDriver(String pojectName) {
+        this.pojectName = pojectName;
+    }
 
     public byte[] transform(ClassLoader loader,
                             String className,
@@ -20,30 +26,31 @@ public class CoverageDriver implements ClassFileTransformer{
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
 
-        int[] curClassStateMentCount = new int[1];
-        boolean[] needAdapt = new boolean[1];
+        FirstPassInfo info = new FirstPassInfo();
 
-        byte[] ret = passOne(classfileBuffer, curClassStateMentCount, needAdapt);
+        byte[] ret = passOne(classfileBuffer, info);
 
-        System.out.println(curClassStateMentCount[0]);
-
-        if (needAdapt[0]) return passTwo(ret);
-        else return ret;
+        if (info.needAdapt) System.out.println(info);
+//
+//        if (info.needAdapt) return passTwo(ret);
+//        else return ret;
+        return ret;
     }
 
-    private byte[] passOne(byte[] classByte, int[] array, boolean[] needAdapt){
+    private byte[] passOne(byte[] classByte, FirstPassInfo info) {
         byte[] ret;
         ClassReader cr = new ClassReader(classByte);
         ClassWriter cw = new ClassWriter(cr, 0);
-        InformationCollecter ca = new InformationCollecter(cw);
+        InformationCollecter ca = new InformationCollecter(cw, pojectName);
         cr.accept(ca, 0);
-        array[0] = ca.getStatementsCounter();
-        needAdapt[0] = ca.getNeedAdapt();
+        info.statementsCount = ca.getStatementsCounter();
+        info.needAdapt = ca.getNeedAdapt();
+        info.name = ca.getName();
         ret = cw.toByteArray();
         return ret;
     }
 
-    private byte[] passTwo(byte[] classByte){
+    private byte[] passTwo(byte[] classByte) {
         byte[] ret;
         ClassReader cr = new ClassReader(classByte);
         ClassWriter cw = new ClassWriter(cr, 0);
@@ -51,5 +58,16 @@ public class CoverageDriver implements ClassFileTransformer{
         cr.accept(ca, 0);
         ret = cw.toByteArray();
         return ret;
+    }
+
+    private class FirstPassInfo {
+        int statementsCount;
+        boolean needAdapt;
+        String name;
+
+        @Override
+        public String toString() {
+            return "Class " + name + " has " + statementsCount + " statements.";
+        }
     }
 }
