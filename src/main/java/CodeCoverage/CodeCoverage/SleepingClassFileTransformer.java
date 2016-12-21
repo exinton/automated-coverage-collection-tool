@@ -13,7 +13,7 @@ public class SleepingClassFileTransformer implements ClassFileTransformer {
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
 			ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 		  byte[] byteCode = classfileBuffer;
-		  
+
 		  if (className.equals("CodeCoverage/CodeCoverage/Sleeping")) {
 			  
 	            try {

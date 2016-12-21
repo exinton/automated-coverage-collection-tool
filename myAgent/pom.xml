@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>groupId</groupId>
-    <artifactId>CodeCoverage</artifactId>
+    <artifactId>myAgent</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     
